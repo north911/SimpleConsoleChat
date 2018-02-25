@@ -3,8 +3,8 @@ package com.touchsoft.server;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
+
 
 /**
  * Класс сервера. Мониторит порт, принимает сообщение.
@@ -14,14 +14,16 @@ public class App {
     private Thread serverThread; // главный поток обработки сервер-сокета
     //очередь, где хранятся все SocketProcessor-ы для рассылки
     private BlockingQueue<SocketProcessor> usersQueue = new LinkedBlockingQueue<SocketProcessor>();
+    ExecutorService ex;
 
     /**
      * Конструктор объекта сервера
      */
     public App(int port) throws IOException {
         serverSocket = new ServerSocket(port); // создаем сервер-сокет
-        System.out.println("Чат-сервер запущен на порту "+port);
-        ServerLogger.writeLog("Чат-сервер запущен на порту "+port);
+        System.out.println("Чат-сервер запущен на порту " + port);
+        ServerLogger.writeLog("Чат-сервер запущен на порту " + port);
+        ex = Executors.newFixedThreadPool(100);
     }
 
     /**
@@ -33,15 +35,16 @@ public class App {
             Socket s = getNewConnection();
             if (serverThread.isInterrupted()) { // если это фейк-соединение, то наш поток был interrupted(),
                 break;
-            } else if (s != null){
+            } else if (s != null) {
                 try {
-                    SocketProcessor processor = new SocketProcessor(s,usersQueue);
-                    Thread thread = new Thread(processor);
+                    SocketProcessor processor = new SocketProcessor(s, usersQueue);
+                    /*Thread thread = new Thread(processor);
                     thread.setDaemon(true); //ставим поток в демона (чтобы не ожидать его закрытия)
-                    thread.start();
+                    thread.start();*/
+                    ex.submit(processor);
                     usersQueue.offer(processor); //добавляем в список
+                } catch (IOException ignored) {
                 }
-                catch (IOException ignored) {}
             }
         }
     }
@@ -64,13 +67,14 @@ public class App {
      */
     private synchronized void shutdownServer() {
         // обрабатываем список рабочих коннектов, закрываем каждый
-        for (SocketProcessor s: usersQueue) {
-            s.close(usersQueue,s,s.getS());
+        for (SocketProcessor s : usersQueue) {
+            s.close(usersQueue, s, s.getS());
         }
         if (!serverSocket.isClosed()) {
             try {
                 serverSocket.close();
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
         }
     }
 
