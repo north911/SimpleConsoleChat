@@ -32,8 +32,8 @@ public class ClientAgentConnectorTest {
         BlockingQueue<SocketProcessor> blockingQueue = mock(BlockingQueue.class);
         ClientAgentConnector clientAgentConnector = mock(ClientAgentConnector.class);
         SocketProcessor socketProcessor = mock(SocketProcessor.class);
-        clientAgentConnector.tryAssignAgent(blockingQueue,socketProcessor);
-        verify(clientAgentConnector).tryAssignAgent(blockingQueue,socketProcessor);
+        clientAgentConnector.tryAssignAgent(blockingQueue,socketProcessor,"asd");
+        verify(clientAgentConnector).tryAssignAgent(blockingQueue,socketProcessor,"asd");
 
     }
 }

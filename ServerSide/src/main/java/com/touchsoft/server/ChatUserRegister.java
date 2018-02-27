@@ -41,6 +41,7 @@ public class ChatUserRegister {
 
         } catch (Exception e) {
             e.printStackTrace();
+            ServerLogger.writeLog(e.getStackTrace().toString());
         }
     }
 

@@ -25,6 +25,10 @@ public class ClientAgentConnector {
 
     public void removeAgent(SocketProcessor socketProcessor) {
 
+        if (socketProcessor.getChatUser().getUserTo() != null) {
+            socketProcessor.getChatUser().getUserTo().send(socketProcessor.getChatUser().getName() +
+                    " disconnectet from the chat", socketProcessor.getChatUser().getUserTo().getBw());
+        }
         socketProcessor.getChatUser().getUserTo().getChatUser().setAvailable(true);
         socketProcessor.getChatUser().getUserTo().getChatUser().setUserTo(null);
         socketProcessor.getChatUser().setUserTo(null);
@@ -32,18 +36,23 @@ public class ClientAgentConnector {
 
     }
 
-    public void tryAssignAgent(BlockingQueue<SocketProcessor> usersQueue, SocketProcessor socketProcessor) {
+    public void tryAssignAgent(BlockingQueue<SocketProcessor> usersQueue, SocketProcessor socketProcessor, String message) {
 
         SocketProcessor availableAgent = findAvailableAgent(usersQueue);
         socketProcessor.getChatUser().setUserTo(availableAgent);
 
-        /**
-         * если нет свободных агентов просто закрывает поток и глушит клиентское приложение
-         * в будущем возможно надо придумать другое решение
-         */
+
         if (availableAgent == null)
-            socketProcessor.send("нет свободных агентов",socketProcessor.getBw());
-        else
+            socketProcessor.send("нет свободных агентов", socketProcessor.getBw());
+        else {
             availableAgent.getChatUser().setUserTo(socketProcessor);
+            availableAgent.send("connected to agent", socketProcessor.getBw());
+            availableAgent.send(socketProcessor.getChatUser().getUserTo().getChatUser().getName()
+                    + " connected", socketProcessor.getChatUser().getUserTo().getBw());
+            availableAgent.send(message, socketProcessor.getChatUser().getUserTo().getBw());
+
+
+        }
+
     }
 }

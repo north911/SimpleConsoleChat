@@ -61,6 +61,7 @@ public class SocketProcessor implements Runnable {
                 // пробуем прочесть.
             } catch (IOException e) {
                 close(usersQueue, this, s); // если не получилось - закрываем сокет.
+                ServerLogger.writeLog(e.getStackTrace().toString());
             }
             //если объект чатюзера еще null то создаем его и тем самым заполняем поле
             //для идентификации потока
@@ -79,7 +80,7 @@ public class SocketProcessor implements Runnable {
                     if (getChatUser().getUserTo() != null) {
                         this.getChatUser().getUserTo().send(getPrefix() + ": " + line, getChatUser().getUserTo().getBw());
                     } else if (this.chatUser.getRole().equals("client")) {
-                        clientAgentConnector.tryAssignAgent(usersQueue, this);
+                        clientAgentConnector.tryAssignAgent(usersQueue, this,getPrefix()+": "+line);
                     } else
                         this.send("нет собеседника", getBw());
 
@@ -102,6 +103,7 @@ public class SocketProcessor implements Runnable {
             bufferedWriter.flush(); // отправляем
         } catch (IOException e) {
             close(usersQueue, this, s); //если глюк в момент отправки - закрываем данный сокет.
+            ServerLogger.writeLog(e.getStackTrace().toString());
         }
     }
 
@@ -112,7 +114,8 @@ public class SocketProcessor implements Runnable {
         usersQueue.remove(socketProcessor);//убираем из списка
         ServerLogger.writeLog(socketProcessor.getChatUser().getName() + " disconected");
         if (socketProcessor.getChatUser().getUserTo() != null) {
-            socketProcessor.getChatUser().getUserTo().send(this.chatUser.getName() + " disconnectet from the chat", socketProcessor.getBw());
+            socketProcessor.getChatUser().getUserTo().send(this.chatUser.getName() +
+                    " disconnectet from the chat", socketProcessor.getChatUser().getUserTo().getBw());
             socketProcessor.getChatUser().getUserTo().getChatUser().setUserTo(null);
             socketProcessor.getChatUser().getUserTo().getChatUser().setAvailable(true);
         }
@@ -120,6 +123,7 @@ public class SocketProcessor implements Runnable {
             try {
                 soc.close(); // закрываем
             } catch (IOException ignored) {
+                ServerLogger.writeLog(ignored.getStackTrace().toString());
             }
         }
     }

@@ -17,10 +17,10 @@ public class Receiver implements Runnable {
     /**
      * конструктор класса
      */
-    public Receiver(Socket socket, BufferedReader socketReader) {
+    public Receiver(Socket socket, BufferedReader socketReader, ChatUtils chatUtils) {
         this.socket = socket;
         this.socketReader = socketReader;
-        chatUtils = new ChatUtils();
+        this.chatUtils = chatUtils;
     }
 
     public void run() {

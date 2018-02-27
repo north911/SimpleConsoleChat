@@ -32,18 +32,19 @@ public class App {
     void run() {
         serverThread = Thread.currentThread(); //сохраняем поток
         while (true) {
-            Socket s = getNewConnection();
+            Socket socket = getNewConnection();
             if (serverThread.isInterrupted()) { // если это фейк-соединение, то наш поток был interrupted(),
                 break;
-            } else if (s != null) {
+            } else if (socket != null) {
                 try {
-                    SocketProcessor processor = new SocketProcessor(s, usersQueue);
+                    SocketProcessor processor = new SocketProcessor(socket, usersQueue);
                     /*Thread thread = new Thread(processor);
                     thread.setDaemon(true); //ставим поток в демона (чтобы не ожидать его закрытия)
                     thread.start();*/
                     ex.submit(processor);
                     usersQueue.offer(processor); //добавляем в список
                 } catch (IOException ignored) {
+                    ServerLogger.writeLog(ignored.getStackTrace().toString());
                 }
             }
         }
@@ -57,7 +58,7 @@ public class App {
         try {
             s = serverSocket.accept();
         } catch (IOException e) {
-            shutdownServer(); // если ошибка в момент приема - вырубаем сервер
+            ServerLogger.writeLog(e.getStackTrace().toString());
         }
         return s;
     }
@@ -74,6 +75,7 @@ public class App {
             try {
                 serverSocket.close();
             } catch (IOException ignored) {
+                ServerLogger.writeLog(ignored.getStackTrace().toString());
             }
         }
     }
@@ -82,8 +84,8 @@ public class App {
      * входная точка программы
      */
     public static void main(String[] args) throws IOException {
-        new App(45000).run(); // если сервер не создался, программа
-        // вылетит по эксепшену, и метод run() не запуститься
+        new App(45000).run();
+
     }
 
 }

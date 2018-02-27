@@ -19,13 +19,13 @@ public class ChatUtils {
             input = userInput.readLine();
             massiveInput = input.split(" ");
 
-            while (massiveInput.length != 3 && !massiveInput[0].equals("/register")
+            while ((massiveInput.length != 3 || !massiveInput[0].equals("/register"))
                     || (!massiveInput[1].equals("agent") && !massiveInput[1].equals("client"))) {
                 System.out.println("ошибка ввода");
                 input = userInput.readLine();
                 massiveInput = input.split(" ");
             }
-            // nickname = massiveInput[2];
+
             jsonObject.put("name", massiveInput[2]);
             jsonObject.put("role", massiveInput[1]);
 
@@ -37,7 +37,7 @@ public class ChatUtils {
     }
 
 
-    public synchronized void sendMessage(String line, BufferedWriter socketWriter) {
+    public void sendMessage(String line, BufferedWriter socketWriter) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("message", line);
         try {
@@ -49,7 +49,7 @@ public class ChatUtils {
         }
     }
 
-    public synchronized void close(Socket curSocket) {//метод синхронизирован, чтобы исключить двойное закрытие.
+    public void close(Socket curSocket) {//метод синхронизирован, чтобы исключить двойное закрытие.
         if (!curSocket.isClosed()) { // проверяем, что сокет не закрыт...
             try {
                 curSocket.close(); // закрываем...

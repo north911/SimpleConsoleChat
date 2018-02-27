@@ -33,7 +33,7 @@ public class App {
         } catch (IOException e) {
             chatUtils.close(socket); // в любой ошибке - закрываем.
         }
-        new Thread(new Receiver(socket, socketReader)).start(); // создаем и запускаем поток асинхронного чтения из сокета
+        new Thread(new Receiver(socket, socketReader,chatUtils)).start(); // создаем и запускаем поток асинхронного чтения из сокета
     }
 
     /**
