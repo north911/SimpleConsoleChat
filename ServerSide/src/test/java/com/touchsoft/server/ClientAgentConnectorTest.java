@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.io.BufferedWriter;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.mockito.Mockito.*;
@@ -12,7 +13,7 @@ public class ClientAgentConnectorTest {
 
     @Test
     public void findAvailableAgent() {
-        BlockingQueue<SocketProcessor> blockingQueue = mock(BlockingQueue.class);
+        CopyOnWriteArrayList<SocketProcessor> blockingQueue = mock(CopyOnWriteArrayList.class);
         ClientAgentConnector clientAgentConnector = mock(ClientAgentConnector.class);
         SocketProcessor socketProcessor = mock(SocketProcessor.class);
         when(clientAgentConnector.findAvailableAgent(blockingQueue)).thenReturn(socketProcessor);
@@ -29,7 +30,7 @@ public class ClientAgentConnectorTest {
 
     @Test
     public void tryAssignAgent() {
-        BlockingQueue<SocketProcessor> blockingQueue = mock(BlockingQueue.class);
+        CopyOnWriteArrayList<SocketProcessor> blockingQueue = mock(CopyOnWriteArrayList.class);
         ClientAgentConnector clientAgentConnector = mock(ClientAgentConnector.class);
         SocketProcessor socketProcessor = mock(SocketProcessor.class);
         clientAgentConnector.tryAssignAgent(blockingQueue,socketProcessor,"asd");

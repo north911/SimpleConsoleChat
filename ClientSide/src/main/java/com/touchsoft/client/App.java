@@ -1,6 +1,7 @@
 package com.touchsoft.client;
 
 import org.json.JSONObject;
+
 import java.net.Socket;
 import java.io.*;
 
@@ -12,12 +13,13 @@ public class App {
     private JSONObject jsonObject;
     private ChatUtils chatUtils;
     private String userString;
+
     /**
      * Конструктор объекта клиента
      */
     public App() throws IOException {
         final String host = "localhost"; //default
-        final int port = 45000; //default
+        final int port = Integer.parseInt(PropertyReader.getProperties().getProperty("serverPort")); //default
         chatUtils = new ChatUtils();
         userInput = new BufferedReader(new InputStreamReader(System.in));
 
@@ -33,7 +35,7 @@ public class App {
         } catch (IOException e) {
             chatUtils.close(socket); // в любой ошибке - закрываем.
         }
-        new Thread(new Receiver(socket, socketReader,chatUtils)).start(); // создаем и запускаем поток асинхронного чтения из сокета
+        new Thread(new Receiver(socket, socketReader, chatUtils)).start(); // создаем и запускаем поток асинхронного чтения из сокета
     }
 
     /**
@@ -51,7 +53,7 @@ public class App {
                 chatUtils.close(socket);
                 break;
             } else {
-               chatUtils.sendMessage(userString,socketWriter);
+                chatUtils.sendMessage(userString, socketWriter);
             }
         }
     }
@@ -69,6 +71,5 @@ public class App {
             System.out.println("Невозможно подключиться");
         }
     }
-
 
 }

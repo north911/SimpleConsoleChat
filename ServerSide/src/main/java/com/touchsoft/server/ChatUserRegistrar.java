@@ -6,33 +6,25 @@ import java.io.BufferedWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class ChatUserRegister {
+public class ChatUserRegistrar {
 
     private final String AGENT = "agent";
 
 
-    private ChatUser createClient(String name, String role) {
+    private ChatUser createChatUser(String name, String role, boolean isAvailable) {
         ChatUser client = new ChatUser();
         client.setName(name);
         client.setRole(role);
-        client.setAvailable(false);
+        client.setAvailable(isAvailable);
         return client;
     }
 
 
-    private ChatUser createAgent(String name, String role) {
-        ChatUser agent = new ChatUser();
-        agent.setName(name);
-        agent.setRole(role);
-        agent.setAvailable(true);
-        return agent;
-    }
-
     public void registerChatUser(JSONObject jsonObject, SocketProcessor socketProcessor) {
         if (jsonObject.get("role").toString().equals(AGENT))
-            socketProcessor.setChatUser(createAgent(jsonObject.getString("name"), jsonObject.getString("role")));
+            socketProcessor.setChatUser(createChatUser(jsonObject.getString("name"), jsonObject.getString("role"),true));
         else {
-            socketProcessor.setChatUser(createClient(jsonObject.getString("name"), jsonObject.getString("role")));
+            socketProcessor.setChatUser(createChatUser(jsonObject.getString("name"), jsonObject.getString("role"),false));
         }
 
         try {

@@ -6,6 +6,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.json.JSONObject;
@@ -31,7 +32,7 @@ public class SocketProcessorTest {
 
     @Test
     public void close() throws Exception{
-        BlockingQueue<SocketProcessor> blockingQueue = new LinkedBlockingQueue<>();
+        CopyOnWriteArrayList<SocketProcessor> blockingQueue = new CopyOnWriteArrayList<>();
         SocketProcessor socketProcessor = new SocketProcessor();
         blockingQueue.add(socketProcessor);
         socketProcessor.setChatUser(mock(ChatUser.class));

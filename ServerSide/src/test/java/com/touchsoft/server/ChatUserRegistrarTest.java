@@ -5,17 +5,17 @@ import org.junit.Test;
 import static org.mockito.Mockito.*;
 
 
-public class ChatUserRegisterTest {
+public class ChatUserRegistrarTest {
 
     @Test
     public void registerChatUser(){
         SocketProcessor socketProcessor = mock(SocketProcessor.class);
-        ChatUserRegister chatUserRegister = mock(ChatUserRegister.class);
+        ChatUserRegistrar chatUserRegistrar = mock(ChatUserRegistrar.class);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("role","agent");
         jsonObject.put("name","cooper");
-        chatUserRegister.registerChatUser(jsonObject,socketProcessor);
-        verify(chatUserRegister,atLeastOnce()).registerChatUser(jsonObject,socketProcessor);
+        chatUserRegistrar.registerChatUser(jsonObject,socketProcessor);
+        verify(chatUserRegistrar,atLeastOnce()).registerChatUser(jsonObject,socketProcessor);
 
     }
 }

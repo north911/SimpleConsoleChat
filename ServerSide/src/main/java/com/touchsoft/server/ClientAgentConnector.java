@@ -1,6 +1,7 @@
 package com.touchsoft.server;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * служебный класс для поиска агента
@@ -11,7 +12,7 @@ public class ClientAgentConnector {
 
     final private String AGENT = "agent";
 
-    public SocketProcessor findAvailableAgent(BlockingQueue<SocketProcessor> q) {
+    private SocketProcessor findAvailableAgent(CopyOnWriteArrayList<SocketProcessor> q) {
 
         for (SocketProcessor socketProcessor : q) {
             if (socketProcessor.getChatUser().getRole().equals(AGENT) && socketProcessor.getChatUser().isAvailable()) {
@@ -21,6 +22,8 @@ public class ClientAgentConnector {
         }
 
         return null;
+
+
     }
 
     public void removeAgent(SocketProcessor socketProcessor) {
@@ -36,11 +39,10 @@ public class ClientAgentConnector {
 
     }
 
-    public void tryAssignAgent(BlockingQueue<SocketProcessor> usersQueue, SocketProcessor socketProcessor, String message) {
+    public void tryAssignAgent(CopyOnWriteArrayList<SocketProcessor> usersQueue, SocketProcessor socketProcessor, String message) {
 
         SocketProcessor availableAgent = findAvailableAgent(usersQueue);
         socketProcessor.getChatUser().setUserTo(availableAgent);
-
 
         if (availableAgent == null)
             socketProcessor.send("нет свободных агентов", socketProcessor.getBw());
