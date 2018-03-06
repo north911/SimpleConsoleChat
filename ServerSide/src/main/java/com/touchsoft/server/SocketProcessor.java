@@ -125,7 +125,7 @@ public class SocketProcessor implements Runnable {
             try {
                 soc.close(); // закрываем
             } catch (IOException ignored) {
-                ServerLogger.writeLog(ignored.getStackTrace().toString());
+                ServerLogger.writeLog(ignored.getStackTrace().toString ());
             }
         }
     }
